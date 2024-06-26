@@ -1,0 +1,63 @@
+logging:
+  file:
+    path: logs
+  level:
+    root: INFO
+mybatis:
+  configuration:
+    default-fetch-size: 100
+    default-statement-timeout: 30
+    map-underscore-to-camel-case: true
+spring:
+  application:
+    name: radius-server
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.132.7.18:3306/radius_cluster
+    username: ENC(3PriCei+TItaXgr9B7W4rfvqSTNl/AK0)
+    password: ENC(lODF7EJesKOiAj24Tm97Raf7Iqw9p4X8)
+    druid:
+      #2.连接池配置
+      #初始化连接池的连接数量 大小，最小，最大
+      initial-size: 10
+      min-idle: 10
+      max-active: 300
+      #配置获取连接等待超时的时间
+      max-wait: 60000
+      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      # 是否缓存preparedStatement，也就是PSCache  官方建议MySQL下建议关闭   个人                         建议如果想用SQL防火墙 建议打开
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filter:
+        stat:
+          merge-sql: true
+          slow-sql-millis: 5000
+  redis:
+    cluster:
+      max-redirects: 6 # 跨集群执行命令时要遵循的最大重定向数量
+      #nodes: 10.133.6.207:6379,10.133.6.222:6379,10.133.6.81:6379,10.133.6.207:6380,10.133.6.222:6380,10.133.6.81:6380 #集群节点
+      nodes: 10.132.7.91:6379,10.132.7.153:6379,10.132.7.238:6379,10.132.7.91:6380,10.132.7.153:6380,10.132.7.238:6380 #集群节点
+#    host: 192.168.2.80
+#    port: 28001
+    password: ENC(imgw5ReO9A93xYJX2NwI3SP1I8pq1ZH/z5RRNQHi5vk=)
+    timeout: 10000 # 连接超时时间（毫秒）
+    database: 0
+    lettuce:
+      pool:
+        max-active: 100 # 连接池最大连接数（使用负值表示没有限制）
+        max-idle: 10 # 连接池中的最大空闲连接
+        min-idle: 0 # 连接池中的最小空闲连接
+        max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+radius:
+    authPort: 11812
+    accoPort: 11813
+    serverType: BYWG

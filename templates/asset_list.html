@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asset List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">日志分析系统</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/view_logs">展示</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/edit_logs">编辑</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search_logs">搜索</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/assets">资产管理</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container mt-4">
+        <h1>资产列表</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>IP 地址</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asset in assets %}
+                    <tr>
+                        <td>{{ asset.ip_address }}</td>
+                        <td>{{ asset.description }}</td>
+                        <td>
+                            <a href="{{ url_for('routes.edit_asset', asset_id=asset.id) }}" class="btn btn-sm btn-primary">编辑</a>
+                            <a href="{{ url_for('routes.view_asset_logs', asset_id=asset.id) }}" class="btn btn-sm btn-info">查看日志</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('routes.new_asset') }}" class="btn btn-primary">新增</a>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <!-- 页脚内容 -->
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

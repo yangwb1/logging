@@ -1,0 +1,9 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+textarea {
+    width: 100%;
+}
