@@ -22,6 +22,15 @@ cd 到logstash根目录
  C:\Program Files\Elastic\Beats\8.14.1\winlogbeat
  .\winlogbeat.exe -e -c .\winlogbeat.yml
 
+
+es启动
+进入es的bin目录下
+ .\elasticsearch.bat
+
+#修改es密码
+bin/elasticsearch-reset-password -u elastic
+
+
 部署消息队列，订阅更新各个服务器的配置文件信息。
 方法五是通过事件驱动的方式来实现配置更新和展示，具体步骤如下：
 

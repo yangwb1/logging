@@ -7,19 +7,54 @@
 </head>
 <body>
     <h1>Logs from Elasticsearch</h1>
-    <ul>
-        {% for log in logs %}
-        <li>
-            <strong>Event ID:</strong> {{ log.winlog.event_id }}<br>
-            <strong>Provider:</strong> {{ log.event.provider }}<br>
-            <strong>Action:</strong> {{ log.event.action }}<br>
-            <strong>Message:</strong> {{ log.message|safe }}<br>
-            <strong>Timestamp:</strong> {{ log['@timestamp'] }}<br>
-            <strong>Computer Name:</strong> {{ log.winlog.computer_name }}<br>
-            <strong>Process ID:</strong> {{ log.winlog.process.pid }}<br>
-            <!-- 其他字段根据需要展示 -->
-        </li>
-        {% endfor %}
-    </ul>
+
+    <form method="post">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" value="{{ date }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Sequence</th>
+                <th>Timestamp</th>
+                <th>Event</th>
+                <th>Winlog</th>
+                <th>Host</th>
+                <th>Message</th>
+                <th>Agent</th>
+                <th>Log</th>
+                <th>Tags</th>
+                <th>ECS</th>
+                <th>Full Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.sequence }}</td>
+                <td>{{ log.content['@timestamp'] }}</td>
+                <td>{{ log.content.event }}</td>
+                <td>{{ log.content.winlog }}</td>
+                <td>{{ log.content.host }}</td>
+                <td>{{ log.content.message }}</td>
+                <td>{{ log.content.agent }}</td>
+                <td>{{ log.content.log }}</td>
+                <td>{{ log.content.tags }}</td>
+                <td>{{ log.content.ecs }}</td>
+                <td>{{ log.content.full_content }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <a href="{{ url_for('routes.index', page=1) }}">First</a>
+        <a href="{{ url_for('routes.index', page=page - 1) }}" {% if page == 1 %}style="display:none"{% endif %}>Previous</a>
+        <span>Page {{ page }} of {{ total_pages }}</span>
+        <a href="{{ url_for('routes.index', page=page + 1) }}" {% if page == total_pages %}style="display:none"{% endif %}>Next</a>
+        <a href="{{ url_for('routes.index', page=total_pages) }}">Last</a>
+    </div>
 </body>
 </html>
