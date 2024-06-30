@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传日志文件</title>
+</head>
+<body>
+    <h1>上传日志文件</h1>
+    <form action="{{ url_for('main.upload_file') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="上传">
+    </form>
+
+    {% if logs %}
+    <h2>解析结果</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>时间戳</th>
+                <th>日志级别</th>
+                <th>消息</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.loglevel }}</td>
+                <td>{{ log.message }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</body>
+</html>
