@@ -4,29 +4,39 @@ from . import bp
 from database_operations import log_query_to_db
 from log_processing import log_file_exists, get_log_lines, paginate_logs_by_size, save_logs_to_file, LOG_FILE_PATH
 from flask import Blueprint, render_template, redirect, url_for, request, flash,request, render_template, redirect, url_for, flash, Blueprint
-from models import db, Asset
-# from forms import AssetForm
+# from forms import AssetFormf
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
+
+
+import os
+
+
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from elasticsearch import Elasticsearch, exceptions as es_exceptions
 from datetime import datetime, timedelta
+from pygrok import Grok
+# from . import bp
+from models import db, Asset, EditLogsForm, AssetForm
+
+bp = Blueprint('routes', __name__)
+
+
+GROK_PATTERN = '%{TIMESTAMP_ISO8601:timestamp} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}'
+
 
 # Elasticsearch连接配置
 es = Elasticsearch(
     ['https://localhost:9200'],
     http_auth=('elastic', 'wsayCf-c644HMSqDZUR7'), # 替换为你的用户名和密码
-    verify_certs=False
+    # scheme="https",
+    # port=9200,
+    verify_certs=True,
+    ca_certs="D:\\Program Files\\elasticsearch-8.14.1\\elastic-stack-ca.p12"
 )
 logger = logging.getLogger(__name__)
 
-class EditLogsForm(FlaskForm):
-    log_content = CKEditorField('Log Content')
-    submit = SubmitField('Save')
 
-class AssetForm(FlaskForm):
-    ip_address = StringField('IP 地址')
-    description = StringField('描述')
-    submit = SubmitField('保存')
 
 def paginate_logs_by_size(log_lines, page, rows_per_page=20):
     start_index = (page - 1) * rows_per_page
@@ -35,6 +45,32 @@ def paginate_logs_by_size(log_lines, page, rows_per_page=20):
     total_pages = (len(log_lines) + rows_per_page - 1) // rows_per_page
     return paginated_lines, total_pages
 
+# @bp.route('/grok_logs')
+# def index():
+#     return render_template('grok_logs.html')
+
+@bp.route('/grok_upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            return redirect(request.url)
+        if file:
+            logs = file.read().decode('utf-8').splitlines()
+            parsed_logs = parse_logs(logs)
+            return render_template('grok_upload.html', logs=parsed_logs)
+    return render_template('grok_upload.html')
+
+def parse_logs(logs):
+    grok = Grok(GROK_PATTERN)
+    parsed_logs = []
+    for line in logs:
+        match = grok.match(line)
+        if match:
+            parsed_logs.append(match)
+    return parsed_logs
 
 @bp.route('/logs', methods=['GET', 'POST'])
 def index():
